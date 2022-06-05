@@ -1,0 +1,14 @@
+{
+	"name": "mylist",
+	"version": "0.1",
+	"manifest_version": 3,
+	"permissions":[
+		"storage"
+	  ],
+	"content_scripts": [
+	  {
+		"matches": ["https://*.5ch.net/*","https://www.kurashiru.com/*"],
+		"js": ["jquery-3.6.0.min.js","content_script.js"]
+	  }
+	]
+  }
