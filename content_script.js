@@ -6,6 +6,7 @@ $(function(){
   let sidemenu = document.createElement('div');
   sidemenu.id = "sidemenu";
   let subattrnode = document.createElement("form");
+  subattrnode.id='here';
   let subsubattrnode = document.createElement("input");
   subsubattrnode.id = "koko";
   subsubattrnode.type = "button";
@@ -49,7 +50,9 @@ $(function(){
     'display':'block',
 		'padding':'15px',
 		'border-bottom':'rgb(18, 213, 129) solid 1px',
+    //'border-bottom':'rgb(219, 179, 77) solid 1px',
 		'color':'rgb(219, 179, 77)',
+   // 'color': 'black',
 		'text-decoration':'none'
   });
   $("#menu").css({
@@ -73,10 +76,11 @@ $(function(){
   });
   $("#sidemenu").css({
     'background' : '#000',
-    'opacity' : '0.75',
+    'opacity' : '0.9',
 		'display':'inline-block',
 		'width':'150px',
-		'float':'left'
+		'float':'left',
+    'background': 'white',
   });
   $("#sidemenu_key").css({
 		'display':'inline-block',
@@ -103,6 +107,7 @@ $(function(){
     });
   });
 });
+
   /* ▼ここから初期設定 */
 
   // 1. メニューを囲んでるdivのid
@@ -124,7 +129,7 @@ $(function(){
   var openHtml = '←';
 
   // 7.開閉アニメーションの速さ（単位ミリ秒）
-  var speed = 300;
+  var speed = 130;
 
 
   //***********************************
@@ -170,18 +175,31 @@ $(function(){
   const button2 = document.getElementById("koko");
   button2.addEventListener('click', updateButton);
   function updateButton() {
-    var temp = document.getElementById("pagelist");
-    let pagememo=document.createElement("li");
-    let pageatag=document.createElement("a");
-    pageatag.href=location.href;
-    pageatag.textContent=document.title;
-    pageatag.classList.add('oneitem');
-    pagememo.appendChild(pageatag);
-    temp.appendChild(pagememo);
-    const val = location.href;
-    const x = pageatag.textContent;
-    const data2 = {[x]: val};
-    chrome.storage.local.set(data2, function(){ });
+    chrome.storage.local.get(null, function(items) {
+      let flag = false;
+      for (key in items) {
+        if(items[key]==location.href){
+          flag = true;
+        }
+      }
+      if(flag==true){
+        //何も行わない(’追加済み’のポップアップを出したい)
+      }
+      else{
+        var temp = document.getElementById("pagelist");
+        let pagememo=document.createElement("li");
+        let pageatag=document.createElement("a");
+        pageatag.href=location.href;
+        pageatag.textContent=document.title;
+        pageatag.classList.add('oneitem');
+        pagememo.appendChild(pageatag);
+        temp.appendChild(pagememo);
+        const val = location.href;
+        const x = pageatag.textContent;
+        const data2 = {[x]: val};
+        chrome.storage.local.set(data2, function(){ });
+      }
+    });
     $( document ).ready(function() {
       $(".oneitem").css({
       'display':'block',
@@ -190,7 +208,6 @@ $(function(){
       'color':'rgb(219, 179, 77)',
       'text-decoration':'none'
     });
-
     $(".oneitem").hover(function() {
       // カーソルが当たった時の処理
       $(this).css({'text-decoration':'underline'});
@@ -201,4 +218,13 @@ $(function(){
     });
   });
   }
+  const target = document.getElementById('sidemenu_key');
+  target.addEventListener('mouseover', () => {
+    target.style.opacity= '0.5';
+  }, false);
+  
+  // ボタンから離れた時
+  target.addEventListener('mouseleave', () => {
+    target.style.opacity = '0.75';
+  }, false);
 });
