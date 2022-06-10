@@ -49,7 +49,7 @@ $(function(){
     'display':'block',
 		'padding':'15px',
 		'border-bottom':'rgb(18, 213, 129) solid 1px',
-		'color':'rgb(141, 225, 45)',
+		'color':'rgb(219, 179, 77)',
 		'text-decoration':'none'
   });
   $("#menu").css({
@@ -93,13 +93,14 @@ $(function(){
   $(".oneitem").hover(function() {
 
     // カーソルが当たった時の処理
-    $(this).css("color", "red");
-
+    $(this).css({
+      'text-decoration': 'underline'
+    });
   }, function() {
-
     // カーソルが離れた時の処理
-    $(this).css('color','rgb(141, 225, 45)',);
-
+    $(this).css({
+      'text-decoration': 'none',
+    });
   });
 });
   /* ▼ここから初期設定 */
@@ -146,9 +147,6 @@ $(function(){
   });
 
 
-  /**************************/
-
-  //▼menuの高さをウィンドウの高さ100%に設定する処理（不要な場合は削除）
 
   //変数windowHeightに画面の高さを取得、変数windowHeightに格納
   var windowHeight = $(window).height();
@@ -189,18 +187,17 @@ $(function(){
       'display':'block',
       'padding':'15px',
       'border-bottom':'rgb(18, 213, 129) solid 1px',
-      'color':'rgb(141, 225, 45)',
+      'color':'rgb(219, 179, 77)',
       'text-decoration':'none'
     });
 
     $(".oneitem").hover(function() {
       // カーソルが当たった時の処理
-      $(this).css("color", "red");
+      $(this).css({'text-decoration':'underline'});
   
     }, function() {
       // カーソルが離れた時の処理
-      $(this).css('color','rgb(141, 225, 45)',);
-  
+      $(this).css({'text-decoration':'none'});
     });
   });
   }
