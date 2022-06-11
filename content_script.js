@@ -1,17 +1,25 @@
 $(function(){
+  var head = document.getElementsByTagName('head')[0];
+  var link = document.createElement('link');
+  link.setAttribute('rel','stylesheet');
+  link.setAttribute('href','bootstrap.min.css');
+  head.appendChild(link);
   //サイドメニューの作成
   var menu_wrap = document.createElement('div');
   menu_wrap.id="menu_wrap";
-
   let sidemenu = document.createElement('div');
   sidemenu.id = "sidemenu";
   let subattrnode = document.createElement("form");
   subattrnode.id='here';
-  let subsubattrnode = document.createElement("input");
-  subsubattrnode.id = "koko";
+  let subsubattrnode = document.createElement("button");
   subsubattrnode.type = "button";
-  subsubattrnode.value = "このページを追加";
+  subsubattrnode.id = "koko";
+  subsubattrnode.classList.add("btn","btn-warning");
+  subsubattrnode.setAttribute("data-toggle","tooltip");
+  subsubattrnode.title="追加済み";
+  subsubattrnode.textContent = "このページを追加";
   subattrnode.appendChild(subsubattrnode);
+  $(subattrnode).find('[data-toggle="tooltip"]').tooltip();
   sidemenu.appendChild(subattrnode);
   let pagelist = document.createElement("ul");
   pagelist.id = "pagelist";
@@ -44,7 +52,6 @@ $(function(){
   //サイドメニューを追加
   document.body.appendChild(menu_wrap);
 
-
   $( document ).ready(function() {
     $(".oneitem").css({
     'display':'block',
@@ -56,10 +63,10 @@ $(function(){
 		'text-decoration':'none'
   });
   $("#menu").css({
-   // 'position': 'fixed',
+  //'position': 'relative',
     'top': '0px',
     'left': '0px',
-   // 'width': '150px',
+    'width': '150px',
     'height': '100vh',
    // 'background': 'lightgray',
     'overflow-y': 'scroll',
@@ -72,11 +79,11 @@ $(function(){
     'top' : '0',
     'width' : '200px',
     'left' : '-150px',
-    'z-index':'9998'
+    'z-index':'9996'
   });
   $("#sidemenu").css({
     'background' : '#000',
-    'opacity' : '0.9',
+    'opacity' : '0.95',
 		'display':'inline-block',
 		'width':'150px',
 		'float':'left',
@@ -94,6 +101,7 @@ $(function(){
 		'cursor':'pointer',
 		'margin-top':'50px'
   });
+
   $(".oneitem").hover(function() {
 
     // カーソルが当たった時の処理
@@ -105,6 +113,20 @@ $(function(){
     $(this).css({
       'text-decoration': 'none',
     });
+  });
+  chrome.storage.local.get(null, function(items) {
+    let flag = false;
+    for (key in items) {
+      if(items[key]==location.href){
+        flag = true;
+      }
+    }
+    if(flag==true){
+      //何も行わない(’追加済み’のポップアップを出したい)
+    }
+    else{
+    $("[data-toggle='tooltip']").tooltip('dispose');
+    }
   });
 });
 
@@ -170,9 +192,8 @@ $(function(){
       $(sideMenu).height(windowHeight);
     }, 50);
   });
-
-  //追加ボタンが押された時に現在のページを追加する
   const button2 = document.getElementById("koko");
+  //追加ボタンが押された時に現在のページを追加する
   button2.addEventListener('click', updateButton);
   function updateButton() {
     chrome.storage.local.get(null, function(items) {
@@ -198,6 +219,7 @@ $(function(){
         const x = pageatag.textContent;
         const data2 = {[x]: val};
         chrome.storage.local.set(data2, function(){ });
+        $("[data-toggle='tooltip']").tooltip('enable');
       }
     });
     $( document ).ready(function() {
