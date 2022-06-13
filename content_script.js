@@ -30,6 +30,8 @@ $(function(){
       pageatag.classList.add('oneitem');
       pageatag.href = items[key];
       pageatag.textContent = key;
+      pageatag.id=key;
+      pageatag.type="button";
       pagememo.appendChild(pageatag);
       pagelist.appendChild(pagememo);
     }
@@ -192,6 +194,9 @@ $(function(){
       $(sideMenu).height(windowHeight);
     }, 50);
   });
+
+
+  
   const button2 = document.getElementById("koko");
   //追加ボタンが押された時に現在のページを追加する
   button2.addEventListener('click', updateButton);
@@ -249,4 +254,55 @@ $(function(){
   target.addEventListener('mouseleave', () => {
     target.style.opacity = '0.75';
   }, false);
+
+/*削除の処理が複数回とんでくるときの処理はdocument.readyを
+入れ子にすることでできるので，再帰関数をやってみる．それが
+できたら追加処理と削除処理がランダムに高々n+2回とんでくるクエリという形で，追加の方も組み込んでみる．
+*/
+  $( document ).ready(function() {
+    $('.oneitem').on('contextmenu', function(){
+      var id =  $(this).attr("id");
+      chrome.storage.local.remove([id]);
+      //pagelist直下を全部消して，strogageからデータを読み直す
+      const node = document.getElementById("pagelist");
+      while(node.firstChild){
+        node.removeChild(node.firstChild);
+      }
+      let pagelist2=document.getElementById("pagelist");
+      chrome.storage.local.get(null, function(items) {
+        for (key in items) {
+          let pagememo2 = document.createElement('li');
+          let pageatag2 = document.createElement('a');
+          pageatag2.classList.add('oneitem');
+          pageatag2.href = items[key];
+          pageatag2.textContent = key;
+          pageatag2.id=key;
+          pageatag2.type="button";
+          pagememo2.appendChild(pageatag2);
+          pagelist2.appendChild(pagememo2);
+        }
+      });
+      $( document ).ready(function() {
+        $(".oneitem").css({
+          'display':'block',
+          'padding':'15px',
+          'border-bottom':'rgb(18, 213, 129) solid 1px',
+          'color':'rgb(219, 179, 77)',
+          'text-decoration':'none'
+        });
+        $(".oneitem").hover(function() {
+          // カーソルが当たった時の処理
+          $(this).css({'text-decoration':'underline'});
+      
+        }, function() {
+          // カーソルが離れた時の処理
+          $(this).css({'text-decoration':'none'});
+        });
+        $( document ).ready(function() {
+
+        });
+      });
+  });
+});
+
 });
