@@ -157,7 +157,6 @@ $(function(){
 
 
   //***********************************
-
   //▼ボタンをクリックしたらメニューが開いたり閉じたりする処理
   $(sidemenuKey).click(function(){
       if($(menuWrap).hasClass('active')){
@@ -196,55 +195,6 @@ $(function(){
   });
 
 
-  
-  const button2 = document.getElementById("koko");
-  //追加ボタンが押された時に現在のページを追加する
-  button2.addEventListener('click', updateButton);
-  function updateButton() {
-    chrome.storage.local.get(null, function(items) {
-      let flag = false;
-      for (key in items) {
-        if(items[key]==location.href){
-          flag = true;
-        }
-      }
-      if(flag==true){
-        //何も行わない(’追加済み’のポップアップを出したい)
-      }
-      else{
-        var temp = document.getElementById("pagelist");
-        let pagememo=document.createElement("li");
-        let pageatag=document.createElement("a");
-        pageatag.href=location.href;
-        pageatag.textContent=document.title;
-        pageatag.classList.add('oneitem');
-        pagememo.appendChild(pageatag);
-        temp.appendChild(pagememo);
-        const val = location.href;
-        const x = pageatag.textContent;
-        const data2 = {[x]: val};
-        chrome.storage.local.set(data2, function(){ });
-        $("[data-toggle='tooltip']").tooltip('enable');
-      }
-    });
-    $( document ).ready(function() {
-      $(".oneitem").css({
-      'display':'block',
-      'padding':'15px',
-      'border-bottom':'rgb(18, 213, 129) solid 1px',
-      'color':'rgb(219, 179, 77)',
-      'text-decoration':'none'
-    });
-    $(".oneitem").hover(function() {
-      // カーソルが当たった時の処理
-      $(this).css({'text-decoration':'underline'});
-  
-    }, function() {
-      // カーソルが離れた時の処理
-      $(this).css({'text-decoration':'none'});
-    });
-  });
-  }
   const target = document.getElementById('sidemenu_key');
   target.addEventListener('mouseover', () => {
     target.style.opacity= '0.5';
@@ -259,50 +209,123 @@ $(function(){
 入れ子にすることでできるので，再帰関数をやってみる．それが
 できたら追加処理と削除処理がランダムに高々n+2回とんでくるクエリという形で，追加の方も組み込んでみる．
 */
-  $( document ).ready(function() {
-    $('.oneitem').on('contextmenu', function(){
-      var id =  $(this).attr("id");
-      chrome.storage.local.remove([id]);
-      //pagelist直下を全部消して，strogageからデータを読み直す
-      const node = document.getElementById("pagelist");
-      while(node.firstChild){
-        node.removeChild(node.firstChild);
+
+  let inf=111111111;
+  let eexists=false;
+  let aexists=false;
+  function eraseq(n){
+    if(n!=0){
+      $( document ).ready(function() {
+        if(eexists==false){
+          eexists=true;
+          $('.oneitem').on('contextmenu', function(){
+            eexists=false;
+            $('#koko').off();
+            aexists=false;
+            console.log(n);
+            var id =  $(this).attr("id");
+            console.log(id);
+            chrome.storage.local.remove([id]);
+              //pagelist直下を全部消して，strogageからデータを読み直す
+            const node = document.getElementById("pagelist");
+            while(node.firstChild){
+              node.removeChild(node.firstChild);
+            }
+            let pagelist2=document.getElementById("pagelist");
+            chrome.storage.local.get(null, function(items) {
+              for(key in items) {
+                let pagememo2 = document.createElement('li');
+                let pageatag2 = document.createElement('a');
+                pageatag2.classList.add('oneitem');
+                pageatag2.href = items[key];
+                pageatag2.textContent = key;
+                pageatag2.id=key;
+                pageatag2.type="button";
+                pagememo2.appendChild(pageatag2);
+                pagelist2.appendChild(pagememo2);
+              }
+            });
+            $( document ).ready(function() {
+              $(".oneitem").css({
+                'display':'block',
+                'padding':'15px',
+                'border-bottom':'rgb(18, 213, 129) solid 1px',
+                'color':'rgb(219, 179, 77)',
+                'text-decoration':'none'
+              });
+              $(".oneitem").hover(function() {
+                // カーソルが当たった時の処理
+                $(this).css({'text-decoration':'underline'});
+            
+              }, function() {
+                // カーソルが離れた時の処理
+                $(this).css({'text-decoration':'none'});
+              });
+              $( document ).ready(function() {
+                eraseq(n-1);
+              });
+            });
+          });
       }
-      let pagelist2=document.getElementById("pagelist");
-      chrome.storage.local.get(null, function(items) {
-        for (key in items) {
-          let pagememo2 = document.createElement('li');
-          let pageatag2 = document.createElement('a');
-          pageatag2.classList.add('oneitem');
-          pageatag2.href = items[key];
-          pageatag2.textContent = key;
-          pageatag2.id=key;
-          pageatag2.type="button";
-          pagememo2.appendChild(pageatag2);
-          pagelist2.appendChild(pagememo2);
+        if(aexists==false){
+          aexists=true;
+          $('#koko').on('click', function(){
+            $('.oneitem').off();
+            eexists=false;
+            aexists=false;
+            chrome.storage.local.get(null, function(items){
+              let flag = false;
+              for (key in items) {
+                if(items[key]==location.href){
+                  flag = true;
+                }
+              }
+              if(flag==true){
+                //何も行わない(’追加済み’のポップアップを出したい)
+              }
+              else{
+                var temp = document.getElementById("pagelist");
+                let pagememo=document.createElement("li");
+                let pageatag=document.createElement("a");
+                pageatag.href=location.href;
+                pageatag.textContent=document.title;
+                pageatag.classList.add('oneitem');
+                pageatag.id=document.title;
+                pagememo.appendChild(pageatag);
+                temp.appendChild(pagememo);
+                const val = location.href;
+                const x = pageatag.textContent;
+                const data2 = {[x]: val};
+                chrome.storage.local.set(data2, function(){ });
+                $("[data-toggle='tooltip']").tooltip('enable');
+              }
+            });
+            $( document ).ready(function() {
+              $(".oneitem").css({
+              'display':'block',
+              'padding':'15px',
+              'border-bottom':'rgb(18, 213, 129) solid 1px',
+              'color':'rgb(219, 179, 77)',
+              'text-decoration':'none'
+              });
+              $(".oneitem").hover(function() {
+                // カーソルが当たった時の処理
+                $(this).css({'text-decoration':'underline'});
+            
+              }, function() {
+                // カーソルが離れた時の処理
+                $(this).css({'text-decoration':'none'});
+              });
+              $( document ).ready(function() {
+                eraseq(n-1);
+              });
+            });
+          });
         }
       });
-      $( document ).ready(function() {
-        $(".oneitem").css({
-          'display':'block',
-          'padding':'15px',
-          'border-bottom':'rgb(18, 213, 129) solid 1px',
-          'color':'rgb(219, 179, 77)',
-          'text-decoration':'none'
-        });
-        $(".oneitem").hover(function() {
-          // カーソルが当たった時の処理
-          $(this).css({'text-decoration':'underline'});
-      
-        }, function() {
-          // カーソルが離れた時の処理
-          $(this).css({'text-decoration':'none'});
-        });
-        $( document ).ready(function() {
+    }
+  }
 
-        });
-      });
-  });
-});
-
+  eraseq(inf);
+  
 });
