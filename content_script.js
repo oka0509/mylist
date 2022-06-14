@@ -259,6 +259,7 @@ DOMの読み込みが終わった後の最新のものを作り直す
                 // カーソルが離れた時の処理
                 $(this).css({'text-decoration':'none'});
               });
+              $("[data-toggle='tooltip']").tooltip('dispose');
               $( document ).ready(function() {
                 erase_or_add_query(n-1);
               });
@@ -270,6 +271,7 @@ DOMの読み込みが終わった後の最新のものを作り直す
           //追加
           $('#koko').on('click', function(){
             $('.oneitem').off();
+            console.log(n);
             eexists=false;
             aexists=false;
             chrome.storage.local.get(null, function(items){
@@ -296,7 +298,9 @@ DOMの読み込みが終わった後の最新のものを作り直す
                 const x = pageatag.textContent;
                 const data2 = {[x]: val};
                 chrome.storage.local.set(data2, function(){ });
+                $( document ).ready(function() {
                 $("[data-toggle='tooltip']").tooltip('enable');
+                });
               }
             });
             $( document ).ready(function() {
