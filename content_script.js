@@ -59,18 +59,14 @@ $(function(){
     'display':'block',
 		'padding':'15px',
 		'border-bottom':'rgb(18, 213, 129) solid 1px',
-    //'border-bottom':'rgb(219, 179, 77) solid 1px',
 		'color':'rgb(219, 179, 77)',
-   // 'color': 'black',
 		'text-decoration':'none'
   });
   $("#menu").css({
-  //'position': 'relative',
     'top': '0px',
     'left': '0px',
     'width': '150px',
-    'height': '100vh',
-   // 'background': 'lightgray',
+    'height': '91vh',
     'overflow-y': 'scroll',
     'scrollbar-face-color': '#999',
     'scrollbar-track-color': '#eee'
@@ -205,19 +201,21 @@ $(function(){
     target.style.opacity = '0.75';
   }, false);
 
-/*削除の処理が複数回とんでくるときの処理はdocument.readyを
-入れ子にすることでできるので，再帰関数をやってみる．それが
-できたら追加処理と削除処理がランダムに高々n+2回とんでくるクエリという形で，追加の方も組み込んでみる．
+/*
+登録ボタン(または削除の右クリック)が行われるたびに既存の
+削除の右クリック(または登録ボタン)を無効化して，再帰を一回分潜り，
+DOMの読み込みが終わった後の最新のものを作り直す
 */
-
   let inf=111111111;
   let eexists=false;
   let aexists=false;
-  function eraseq(n){
+  function erase_or_add_query(n){
     if(n!=0){
       $( document ).ready(function() {
         if(eexists==false){
           eexists=true;
+
+          //削除(右クリック)
           $('.oneitem').on('contextmenu', function(){
             eexists=false;
             $('#koko').off();
@@ -262,13 +260,14 @@ $(function(){
                 $(this).css({'text-decoration':'none'});
               });
               $( document ).ready(function() {
-                eraseq(n-1);
+                erase_or_add_query(n-1);
               });
             });
           });
       }
         if(aexists==false){
           aexists=true;
+          //追加
           $('#koko').on('click', function(){
             $('.oneitem').off();
             eexists=false;
@@ -317,7 +316,7 @@ $(function(){
                 $(this).css({'text-decoration':'none'});
               });
               $( document ).ready(function() {
-                eraseq(n-1);
+                erase_or_add_query(n-1);
               });
             });
           });
@@ -325,7 +324,7 @@ $(function(){
       });
     }
   }
-
-  eraseq(inf);
   
+  erase_or_add_query(inf);
+
 });
