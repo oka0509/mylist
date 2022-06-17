@@ -28,8 +28,8 @@ $(function(){
       let pagememo = document.createElement('li');
       let pageatag = document.createElement('a');
       pageatag.classList.add('oneitem');
-      pageatag.href = items[key];
-      pageatag.textContent = key;
+      pageatag.href = key;
+      pageatag.textContent = items[key];
       pageatag.id=key;
       pageatag.type="button";
       pagememo.appendChild(pageatag);
@@ -115,7 +115,7 @@ $(function(){
   chrome.storage.local.get(null, function(items) {
     let flag = false;
     for (key in items) {
-      if(items[key]==location.href){
+      if(key==location.href){
         flag = true;
       }
     }
@@ -206,15 +206,12 @@ $(function(){
 削除の右クリック(または登録ボタン)を無効化して，再帰を一回分潜り，
 DOMの読み込みが終わった後の最新のものを作り直す
 */
-  let inf=111111111;
   let eexists=false;
   let aexists=false;
   function erase_or_add_query(n){
-    if(n!=0){
       $( document ).ready(function() {
         if(eexists==false){
           eexists=true;
-
           //削除(右クリック)
           $('.oneitem').on('contextmenu', function(){
             eexists=false;
@@ -235,8 +232,8 @@ DOMの読み込みが終わった後の最新のものを作り直す
                 let pagememo2 = document.createElement('li');
                 let pageatag2 = document.createElement('a');
                 pageatag2.classList.add('oneitem');
-                pageatag2.href = items[key];
-                pageatag2.textContent = key;
+                pageatag2.href = key;
+                pageatag2.textContent = items[key];
                 pageatag2.id=key;
                 pageatag2.type="button";
                 pagememo2.appendChild(pageatag2);
@@ -261,11 +258,11 @@ DOMの読み込みが終わった後の最新のものを作り直す
               });
               $("[data-toggle='tooltip']").tooltip('dispose');
               $( document ).ready(function() {
-                erase_or_add_query(n-1);
+                erase_or_add_query(n+1);
               });
             });
           });
-      }
+        }
         if(aexists==false){
           aexists=true;
           //追加
@@ -277,7 +274,7 @@ DOMの読み込みが終わった後の最新のものを作り直す
             chrome.storage.local.get(null, function(items){
               let flag = false;
               for (key in items) {
-                if(items[key]==location.href){
+                if(key==location.href){
                   flag = true;
                 }
               }
@@ -291,11 +288,11 @@ DOMの読み込みが終わった後の最新のものを作り直す
                 pageatag.href=location.href;
                 pageatag.textContent=document.title;
                 pageatag.classList.add('oneitem');
-                pageatag.id=document.title;
+                pageatag.id=location.href;
                 pagememo.appendChild(pageatag);
                 temp.appendChild(pagememo);
-                const val = location.href;
-                const x = pageatag.textContent;
+                const x = location.href;
+                const val = pageatag.textContent;
                 const data2 = {[x]: val};
                 chrome.storage.local.set(data2, function(){ });
                 $( document ).ready(function() {
@@ -320,15 +317,15 @@ DOMの読み込みが終わった後の最新のものを作り直す
                 $(this).css({'text-decoration':'none'});
               });
               $( document ).ready(function() {
-                erase_or_add_query(n-1);
+                erase_or_add_query(n+1);
               });
             });
           });
         }
       });
     }
-  }
-  
-  erase_or_add_query(inf);
 
+  $( document ).ready(function() {
+    erase_or_add_query(0);
+  });
 });
