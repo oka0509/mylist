@@ -124,11 +124,10 @@ $(function(){
     }
     else{
     $("[data-toggle='tooltip']").tooltip('dispose');
+    console.log("aaa");
     }
   });
 });
-
-  /* ▼ここから初期設定 */
 
   // 1. メニューを囲んでるdivのid
   var menuWrap = '#menu_wrap';
@@ -209,17 +208,17 @@ DOMの読み込みが終わった後の最新のものを作り直す
   let eexists=false;
   let aexists=false;
   function erase_or_add_query(n){
+    $('#koko').off('click');
       $( document ).ready(function() {
         if(eexists==false){
           eexists=true;
           //削除(右クリック)
           $('.oneitem').on('contextmenu', function(){
             eexists=false;
-            $('#koko').off();
+            $('#koko').off('click');
             aexists=false;
             console.log(n);
             var id =  $(this).attr("id");
-            console.log(id);
             chrome.storage.local.remove([id]);
               //pagelist直下を全部消して，strogageからデータを読み直す
             const node = document.getElementById("pagelist");
@@ -256,7 +255,9 @@ DOMの読み込みが終わった後の最新のものを作り直す
                 // カーソルが離れた時の処理
                 $(this).css({'text-decoration':'none'});
               });
-              $("[data-toggle='tooltip']").tooltip('dispose');
+              if(location.href==id){
+                $("[data-toggle='tooltip']").tooltip('dispose');
+              }
               $( document ).ready(function() {
                 erase_or_add_query(n+1);
               });
@@ -267,7 +268,7 @@ DOMの読み込みが終わった後の最新のものを作り直す
           aexists=true;
           //追加
           $('#koko').on('click', function(){
-            $('.oneitem').off();
+            $('.oneitem').off('contextmenu');
             console.log(n);
             eexists=false;
             aexists=false;
@@ -325,7 +326,5 @@ DOMの読み込みが終わった後の最新のものを作り直す
       });
     }
 
-  $( document ).ready(function() {
     erase_or_add_query(0);
-  });
 });
