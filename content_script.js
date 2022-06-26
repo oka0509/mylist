@@ -124,7 +124,6 @@ $(function(){
     }
     else{
     $("[data-toggle='tooltip']").tooltip('dispose');
-    console.log("aaa");
     }
   });
 });
@@ -151,7 +150,6 @@ $(function(){
   var speed = 130;
 
 
-  //***********************************
   //▼ボタンをクリックしたらメニューが開いたり閉じたりする処理
   $(sidemenuKey).click(function(){
       if($(menuWrap).hasClass('active')){
@@ -205,18 +203,12 @@ $(function(){
 削除の右クリック(または登録ボタン)を無効化して，再帰を一回分潜り，
 DOMの読み込みが終わった後の最新のものを作り直す
 */
-  let eexists=false;
-  let aexists=false;
   function erase_or_add_query(n){
     $('#koko').off('click');
+    $('.oneitem').off('contextmenu');
       $( document ).ready(function() {
-        if(eexists==false){
-          eexists=true;
           //削除(右クリック)
           $('.oneitem').on('contextmenu', function(){
-            eexists=false;
-            $('#koko').off('click');
-            aexists=false;
             console.log(n);
             var id =  $(this).attr("id");
             chrome.storage.local.remove([id]);
@@ -263,15 +255,9 @@ DOMの読み込みが終わった後の最新のものを作り直す
               });
             });
           });
-        }
-        if(aexists==false){
-          aexists=true;
           //追加
           $('#koko').on('click', function(){
-            $('.oneitem').off('contextmenu');
             console.log(n);
-            eexists=false;
-            aexists=false;
             chrome.storage.local.get(null, function(items){
               let flag = false;
               for (key in items) {
@@ -322,9 +308,7 @@ DOMの読み込みが終わった後の最新のものを作り直す
               });
             });
           });
-        }
       });
     }
-
     erase_or_add_query(0);
 });
